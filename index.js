@@ -14,18 +14,15 @@ app.get('/', (req, res) => {
  		console.error(err);
  		return;
  	}
- 	console.log(data);
- 	console.log(typeof data);
- 	console.log(data.split("\n"))
  	//tasks list from the data
- 	const tasks = ('Study CSS', 'Prepare presentation', 'Finish first web app', 'Have a cookie')
+ 	const tasks = data.split("\n")
  	res.render('index', {tasks: tasks})
  	});
  })
 
 app.post('/', (reg, res) => { 
-	console.log('form and data')
-	});
+	console.log('form sent data')
+	})
 
 
 app.listen(3001, () => {
