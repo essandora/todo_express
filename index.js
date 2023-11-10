@@ -38,15 +38,31 @@ app.get('/', (req, res) => {
 	// tasks list data from file
 	readFile('./tasks.json')
 		.then(tasks => {
-			console.log(tasks)
-			res.render('index', {tasks: tasks})
-	})
+			res.render('index', {
+				tasks: tasks,
+				error: null
+			})
+		})
 })
 
+// for parsing app
 app.use(express.urlencoded({ extended: true }));
 
 app.post('/', (req, res) => { 
+	// control data
+	let error = null 
+	if(req.body.task.trim().length == 0){
+		error = 'Please insert task'
 	readFile('./tasks.json')
+		.then(tasks => {
+			res.render('index', {
+				tasks: tasks,
+				error: error
+			})
+		})
+	} else {
+		//tasks list data from file
+		readFile('./tasks.json')
 		.then(tasks => {
 		// add new task
 		// create new id automatically
@@ -62,16 +78,15 @@ app.post('/', (req, res) => {
 			"id" : index,
 			"task" : req.body.task
 		}
-		console.log(newTask)
 		// add form sent to task array
 		tasks.push(newTask)
 		data = JSON.stringify(tasks, null, 2)
-		console.log(data)
 		writeFile('./tasks.json', data)
 			//redirect to see result
 			res.redirect('/')
 		})
-	})
+	}
+})
 
 app.get('delete-task/:taskId', (req, res) => {
 	let deletedTaskId = parseInt(req.params.taskId)
@@ -84,9 +99,16 @@ app.get('delete-task/:taskId', (req, res) => {
 	})
 	data = JSON.stringify(tasks, null, 2)
 	writeFile('./tasks.json', data)
-		// redirect to see result 
-		res.redirect('/')
-		})
+	// redirect to see result 
+	res.redirect('/')
+	})
+})
+
+app.get('/delete-all/', (req, res) => {
+	//readFile('tasks.json')
+	writeFile('tasks.json', JSON.stringify([]))
+	// redirect to see result
+	res.redirect('/')
 	})
 
 app.listen(3001, () => {
